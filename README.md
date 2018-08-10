@@ -32,13 +32,14 @@ https://www.yoctoproject.org/documentation
 https://www.yoctoproject.org/docs/current/ref-manual/ref-manual.html#ref-manual-system-requirements
 
 
-* get the Yocto core packages, plus this 'meta-ocaml' layers:
+* get the Yocto core packages, plus this `meta-ocaml` layer:
 ```
 git clone -b sumo git://git.yoctoproject.org/poky.git yocto-sumo
 cd yocto-sumo
 git clone https://gitlab.com/wtolkien/meta-ocaml
 ```
-* from the ```yocto-sumo``` directory, initialize the build-environment:
+
+* from the `yocto-sumo` directory, initialize the build-environment:
 ```
 source oe-init-build-env
 ```
@@ -61,8 +62,8 @@ runqemu
 ```
 
 * now edit the Yocto layer configuration file ```conf/bblayers.conf``` to include
-  the `meta-ocaml layer`.
-  Your ```BBLAYERS``` variable should look as below, however you may have to adjust
+  the `meta-ocaml` layer.
+  Your `BBLAYERS` variable should look as below, however you may have to adjust
   your path
 ```
 BBLAYERS ?= " \
