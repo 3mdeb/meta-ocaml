@@ -1,0 +1,45 @@
+--- a/configure	2018-08-01 15:27:21.057225543 -0700
++++ b/configure	2018-08-01 15:34:55.698547789 -0700
+@@ -456,8 +456,15 @@ case $? in
+   0) inf "The C compiler is ISO C99 compliant." ;;
+   1) wrn "The C compiler is ANSI / ISO C90 compliant, but not ISO C99" \
+          "compliant.";;
+-  2) err "The C compiler $cc is not ISO C compliant.\n" \
+-         "You need an ISO C99 compiler to build OCaml.";;
++  2) 
++     if $cross_compiler; then
++       wrn "Unable to compile the test program.\n" \
++           "This failure is expected for cross-compilation:\n" \
++           "we will assume the C compiler is ISO C99-compliant."
++     else
++       err "The C compiler $cc is not ISO C compliant.\n" \
++           "You need an ISO C99 compiler to build OCaml."
++     fi;;
+   *)
+      if $cross_compiler; then
+        wrn "Unable to compile the test program.\n" \
+@@ -543,6 +550,10 @@ else
+                      echo "#define ARCH_SIXTYFOUR" >> m.h
+                      set 4 4 8 2 8
+                      arch64=true;;
++    arm-*-linux*) inf "OK, this is a regular 32 bit ARM architecture."
++                  echo "#undef ARCH_SIXTYFOUR" >> m.h
++                  set 4 4 4 2 8
++                  arch64=false;;
+     *) err "Since datatype sizes cannot be guessed when cross-compiling,\n" \
+            "a hardcoded list is used but your architecture isn't known yet.\n" \
+            "You need to determine the sizes yourself.\n" \
+@@ -576,11 +587,11 @@ case $? in
+      echo "#define ARCH_BIG_ENDIAN" >> m.h;;
+   1) inf "This is a little-endian architecture."
+      echo "#undef ARCH_BIG_ENDIAN" >> m.h;;
+-  2) err "This architecture seems to be neither big endian nor little" \
+-         "endian.\n OCaml won't run on this architecture.";;
+   *) case $target in
+        *-*-mingw*) inf "This is a little-endian architecture."
+                    echo "#undef ARCH_BIG_ENDIAN" >> m.h;;
++       arm-*-*) inf "This is a little-endian architecture (ARM)."
++                echo "#undef ARCH_BIG_ENDIAN" >> m.h;;
+        *) wrn "Something went wrong during endianness determination.\n" \
+               "You will have to figure out endianness yourself\n" \
+               "(option ARCH_BIG_ENDIAN in m.h).";;
