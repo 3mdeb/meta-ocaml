@@ -1,0 +1,15 @@
+--- a/Makefile	2018-08-13 16:29:58.527521621 -0700
++++ b/Makefile	2018-08-13 16:30:19.111576660 -0700
+@@ -4,10 +4,10 @@ BIN := ./_build/default/bin/main_dune.ex
+ -include Makefile.dev
+
+ default: boot.exe
+-	./boot.exe
++	ocamlrun ./boot.exe
+
+ release: boot.exe
+-	./boot.exe --release
++	ocamlrun ./boot.exe --release
+
+ boot.exe: bootstrap.ml
+ 	ocaml bootstrap.ml
