@@ -1,0 +1,20 @@
+--- a/src_ext/Makefile	2018-08-13 14:00:48.678017556 -0700
++++ b/src_ext/Makefile	2018-08-13 14:44:09.801818656 -0700
+@@ -92,7 +92,7 @@ JBUILDER_CLONE=
+ endif
+
+ jbuilder/_build/install/default/bin/jbuilder$(EXE): $(JBUILDER_CLONE)
+-	cd jbuilder && ocaml bootstrap.ml && ./boot.exe
++	cd jbuilder && ocaml bootstrap.ml && ocamlrun ./boot.exe
+
+ build-pkg: clone-pkg $(PKG_EXTS:=.pkgbuild)
+ 	@
+@@ -164,7 +164,7 @@ endef
+
+ %.stamp: %.download
+ 	mkdir -p tmp-$*
+-	cd tmp-$* && $(if $(patsubst %.tar.gz,,$(URL_$*)),bunzip2,gunzip) -c ../$(call ARCHIVE_FILE,$*) | tar xf -
++	cd tmp-$* && $(if $(patsubst %.tar.gz,,$(URL_$*)),/bin/bunzip2,/bin/gunzip) -c ../$(call ARCHIVE_FILE,$*) | tar xf -
+ 	rm -rf $*
+ 	@for ii in tmp-$*/*; do if [ -d $${ii} ]; then mv $${ii} $*; fi; done; \
+ 	rm -rf tmp-$*

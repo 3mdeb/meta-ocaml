@@ -1,0 +1,11 @@
+--- a/Makefile	2018-08-13 14:38:03.796621927 -0700
++++ b/Makefile	2018-08-13 14:38:05.816628790 -0700
+@@ -24,7 +24,7 @@ ALWAYS:
+ JBUILDER_DEP = ALWAYS $(JBUILDER_FILE)
+
+ src_ext/jbuilder/_build/install/default/bin/jbuilder$(EXE): src_ext/jbuilder.stamp
+-	cd src_ext/jbuilder && ocaml bootstrap.ml && ./boot.exe
++	cd src_ext/jbuilder && ocaml bootstrap.ml && ocamlrun ./boot.exe
+
+ src_ext/jbuilder.stamp:
+ 	$(MAKE) -C src_ext jbuilder.stamp
