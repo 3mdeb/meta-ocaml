@@ -4,7 +4,6 @@ LICENSE = "MIT"
 
 SRC_URI = " \
     https://github.com/ocaml/dune/archive/${PV}.tar.gz \
-    file://0001-ocamlrun-pathfix.patch \
     "
 
 LIC_FILES_CHKSUM = "file://LICENSE.md;md5=3b903cfeb2c8b8e55d6912f183cdea5b"
