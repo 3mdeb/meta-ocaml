@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PLACEHOLDER
+WORK_SHARED_PATH=""
 CALLED_AS=$(basename "$0")
 
 $WORK_SHARED_PATH/$CALLED_AS "$@"

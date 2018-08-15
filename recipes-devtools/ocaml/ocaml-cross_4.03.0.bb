@@ -64,7 +64,7 @@ do_install() {
     # ideally we would want direct symlinks to the work-shared binaries, however
     # Yocto does not allow absolute paths. So need to patch the path into a
     # shell script and symlink to the shell script instead.
-    sed -i "s|PLACEHOLDER|WORK_SHARED_PATH=${SHARED_D}/usr/bin|" ${WORKDIR}/ocaml-redirect
+    sed -i "s|^WORK_SHARED_PATH.*|WORK_SHARED_PATH=${SHARED_D}/usr/bin|" ${WORKDIR}/ocaml-redirect
     install -m 755 ${WORKDIR}/ocaml-redirect ${D}${bindir}
     cd ${D}${bindir}
     for i in `ls ${SHARED_D}/usr/bin`; do
