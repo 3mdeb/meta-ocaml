@@ -11,9 +11,14 @@ LIC_FILES_CHKSUM = "file://LICENSE.md;md5=3b903cfeb2c8b8e55d6912f183cdea5b"
 SRC_URI[md5sum] = "93fd8ed458396ee45f406435f38db161"
 SRC_URI[sha256sum] = "08e3cb27c1c2fb15ec36bf1fae40e00eb6e23566c9bf5cc78bc8550ed70f4d59"
 
-DEPENDS += " ocaml-native opam-native"
+DEPENDS += " ocaml-native opam-cross-${TARGET_ARCH}"
 
-inherit native
+inherit cross
+
+PROVIDES = "${TARGET_PREFIX}dune-cross"
+PN = "dune-cross-${TARGET_ARCH}"
+
+S = "${WORKDIR}/dune-${PV}"
 
 do_configure () {
     ./configure --libdir ${libdir}
