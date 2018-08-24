@@ -1,0 +1,18 @@
+--- a/opam	2018-08-21 14:38:24.557191004 -0700
++++ b/opam	2018-08-24 13:42:02.523368832 -0700
+@@ -15,6 +15,7 @@ bug-reports: "https://github.com/ocsigen
+ license: "LGPL with OpenSSL linking exception"
+ dev-repo: "git+https://github.com/ocsigen/lwt.git"
+ build: [
++  [ "mv" "discover.exe" "src/unix/config" ]
+   [ "ocaml" "src/util/configure.ml" "-use-libev" "%{conf-libev:installed}%" ]
+   [ "jbuilder" "build" "-p" name "-j" jobs ]
+ ]
+@@ -54,6 +55,7 @@ synchronization primitives. Code can be
+ conflicts: [
+   "ocaml-variants" {= "4.02.1+BER"}
+ ]
++extra-files: ["discover.exe" ""]
+ url {
+   src: "https://github.com/ocsigen/lwt/archive/4.1.0.tar.gz"
+   checksum: "md5=e919bee206f18b3d49250ecf9584fde7"

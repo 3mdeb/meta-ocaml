@@ -1,0 +1,86 @@
+#!/bin/sh
+
+# this script is a dirty hack to replace lwt's 'discover.exe' which is
+# normally generated during build time and examines the system during
+# build time. This does not work for cross-compilation so this script
+# will use pre-defined values instead.
+
+# You may have to adjust this according to your target platform. For now
+# we assume that we have 'pthreads', but not 'libev'.
+
+
+echo "************************************************************************"
+echo "  WE ARE NOW RUNNING A REPLACEMENT 'discover.exe' SCRIPT THAT USES "
+echo "  PREDEFINED VALUES FOR CROSS-COMPILATION. CHECK THE FOLLOWING FILES "
+echo "  IN THE src/unix DIRECTORY FOR ACCURACY: "
+echo " "
+echo "  setup.data"
+echo "  unix_c_flags.sexp"
+echo "  unix_c_library_flags.sexp"
+echo "  lwt_config.h"
+echo "  lwt_config.ml"
+echo " "
+echo "************************************************************************"
+
+# Step 1: create 'setup.data'
+
+cat > setup.data <<EOF
+pthread_opt=""
+pthread_lib="-lpthread"
+EOF
+
+# Step 2: create '.sexp' files (no CR/LF):
+
+echo -n "(-I.)" > unix_c_flags.sexp
+echo -n "(-lpthread)" > unix_c_library_flags.sexp
+
+# Step 3: create 'C' config header:
+
+cat > lwt_config.h <<EOF
+#ifndef __LWT_CONFIG_H
+#define __LWT_CONFIG_H
+//#define HAVE_LIBEV
+#define HAVE_PTHREAD
+#define HAVE_EVENTFD
+#define HAVE_FD_PASSING
+#define HAVE_GETCPU
+#define HAVE_AFFINITY
+#define HAVE_GET_CREDENTIALS_LINUX
+//#define HAVE_GET_CREDENTIALS_NETBSD
+//#define HAVE_GET_CREDENTIALS_OPENBSD
+//#define HAVE_GET_CREDENTIALS_FREEBSD
+//#define HAVE_GETPEEREID
+#define HAVE_FDATASYNC
+//#define HAVE_NETDB_REENTRANT
+#define HAVE_REENTRANT_HOSTENT
+#define NANOSEC(buf, field) buf->st_##field##tim.tv_nsec
+//#define HAVE_BSD_MINCORE
+#if defined(HAVE_GET_CREDENTIALS_LINUX) || defined(HAVE_GET_CREDENTIALS_NETBSD) || defined(HAVE_GET_CREDENTIALS_OPENBSD) || defined(HAVE_GET_CREDENTIALS_FREEBSD) || defined(HAVE_GETPEEREID)
+#  define HAVE_GET_CREDENTIALS
+#endif
+//#define LWT_ON_WINDOWS
+#endif
+EOF
+
+# Step 4: create OCaml config header:
+
+cat > lwt_config.ml <<EOF
+let _HAVE_LIBEV = false
+let _HAVE_PTHREAD = true
+let _HAVE_EVENTFD = true
+let _HAVE_FD_PASSING = true
+let _HAVE_GETCPU = true
+let _HAVE_AFFINITY = true
+let _HAVE_GET_CREDENTIALS_LINUX = true
+let _HAVE_GET_CREDENTIALS_NETBSD = false
+let _HAVE_GET_CREDENTIALS_OPENBSD = false
+let _HAVE_GET_CREDENTIALS_FREEBSD = false
+let _HAVE_GETPEEREID = false
+let _HAVE_FDATASYNC = true
+let _HAVE_NETDB_REENTRANT = false
+let _HAVE_REENTRANT_HOSTENT = true
+let _HAVE_BSD_MINCORE = false
+let _HAVE_GET_CREDENTIALS = _HAVE_GET_CREDENTIALS_LINUX || _HAVE_GET_CREDENTIALS_NETBSD || _HAVE_GET_CREDENTIALS_OPENBSD || _HAVE_GET_CREDENTIALS_FREEBSD || _HAVE_GETPEEREID
+let android = false
+let libev_default = true
+EOF
