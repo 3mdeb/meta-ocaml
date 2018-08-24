@@ -28,8 +28,6 @@ DEPENDS += " \
     virtual/${TARGET_PREFIX}compilerlibs \
     "
 
-PACKAGES = "${PN} ${PN}-runtime"
-
 SHARED_D = "${TMPDIR}/work-shared/ocaml/ocaml-${PV}-${PR}/${TARGET_SYS}"
 
 do_configure () {
@@ -52,10 +50,6 @@ do_compile() {
     oe_runmake opt
 #   oe_runmake opt.opt
 }
-
-#INSANE_SKIP_${PN} += " arch file-rdeps ldflags staticdev textrel"
-#INSANE_SKIP_${PN}-dev += " dev-elf ldflags textrel"
-
 
 do_install() {
     # run regular install
@@ -83,13 +77,3 @@ do_install() {
 }
 
 INHIBIT_SYSROOT_STRIP = "1"
-
-#FILES_${PN} += " /usr/lib"
-FILES_${PN}-runtime += " ${base_bindir}"
-
-
-# OCaml installs a bunch of header and source files in the /usr/lib
-# directory which the OE build system interprets as debug/src files.
-# We suppress package splitting here, assuming that OCaml knows
-# what it's doing. This may have to be revised.
-#INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
