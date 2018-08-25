@@ -20,7 +20,7 @@ SRC_URI_append_arm = " \
 
 inherit opam_install
 
-DEPENDS += " opam-dune opam-cppo"
+DEPENDS += " opam-dune opam-cppo opam-result"
 
 do_patch () {
     # dummy function to override built-in do_patch. This way we can use
