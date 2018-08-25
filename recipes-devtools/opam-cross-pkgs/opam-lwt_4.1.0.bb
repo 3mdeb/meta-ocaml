@@ -29,6 +29,7 @@ do_patch () {
 
 do_patch_append_arm () {
     # copy replacement 'discover.exe'
+    install -d -m 755 ${OPAM_ROOT}/repo/default/packages/lwt/lwt.${PV}/files
     install -m 755 ${WORKDIR}/discover.exe_${TARGET_ARCH} \
         ${OPAM_ROOT}/repo/default/packages/lwt/lwt.${PV}/files/discover.exe
 
