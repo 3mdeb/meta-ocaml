@@ -1,0 +1,17 @@
+This recipe is not working yet. See README.not-working for more information.
+
+Once the issue described there is resolved, it is required to copy
+
+'0001-build-gen-exe-bytecode-only.patch'
+
+to opam's
+
+'repo/default/packages/base/base.v0.9.3/files'
+
+directory and patch
+
+'repo/default/packages/base/base.v0.9.3/opam'
+
+to use this patch.
+
+Use the opam-lwt_4.1.0 recipe and associated patch as a template.

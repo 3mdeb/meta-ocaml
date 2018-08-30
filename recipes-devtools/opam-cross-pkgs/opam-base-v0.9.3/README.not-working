@@ -1,0 +1,70 @@
+This recipe is currently not working.
+
+https://pastebin.com/368jQCbN
+
+
+I'm trying to cross-compile base.v0.9.3 using opam and dune.1.1.1.
+
+During build-time, 'base' creates several 'gen.exe' files which are also executed during build-time.
+Since dune can't handle a cross- and a native- ocaml compiler simultaneously, this fails: gen.exe
+will compiled with the cross-compiler. My indended workaround is to build gen.exe in bytecode and run
+it with the native ocamlrun.
+
+================================
+
+This somehow works for compiler-stdlib/gen/gen.exe:
+
+ - I added '(modes (byte))' to compiler-stdlib/gen/jbuild
+ - I added 'ocamlrun' to the 'action' command in compiler-stdlib/gen/src:
+
+  (action  (run ocamlrun ${<} -stdlib ${ocaml_where}/stdlib.cma -o ${@}))))
+
+
+Here is the output during the build (with comments in [], paths simplified):
+
+[ prelude, not really important... ]:
+Running[123]: (cd _build/default && [cross-ocaml-dir]/ocamldep -modules -impl src/variantslib.ml) > _build/default/src/.base.objs/variantslib.ml.d
+Running[124]: (cd _build/default && [cross-ocaml-dir]/ocamldep -modules -impl src/with_return.ml) > _build/default/src/.base.objs/with_return.ml.d
+Running[125]: (cd _build/default && [cross-ocaml-dir]/ocamldep -modules -impl src/word_size.ml) > _build/default/src/.base.objs/word_size.ml.d
+Running[126]: (cd _build/default && [cross-ocaml-dir]/ocamldep -modules -impl compiler-stdlib/gen/gen.ml) > _build/default/compiler-stdlib/gen/.gen.eobjs/gen.ml.d
+
+[ using ocamlc instead of ocamlopt - good! ]:
+Running[127]: (cd _build/default && [cross-ocaml-dir]/ocamlc -w -40 -g -bin-annot -I compiler-stdlib/gen/.gen.eobjs -I [cross-ocaml-root]/usr/lib/compiler-libs -no-alias-deps -o compiler-stdlib/gen/.gen.eobjs/gen.cmo -c -impl compiler-stdlib/gen/gen.ml)
+
+[ note that dune uses ocamlc instead of ocamlopt, but it also uses the -custom' flag ]:
+Running[128]: (cd _build/default && [cross-ocaml-dir]/ocamlc -w -40 -g -o compiler-stdlib/gen/gen.exe -custom -I [cross-ocaml-root]/usr/lib/compiler-libs [cross-ocaml-root]/usr/lib/compiler-libs/ocamlcommon.cma [cross-ocaml-root]/usr/lib/compiler-libs/ocamlbytecomp.cma compiler-stdlib/gen/.gen.eobjs/gen.cmo)
+
+[ the resulting gen.exe has the cross- ocamlrun linked in and complains when called directly:
+
+  [...]/.opam-switch/build/base.v0.9.3/_build/default/compiler-stdlib/gen$ ./gen.exe
+  bash: ./gen.exe: cannot execute binary file: Exec format error
+
+  howevever when called with a native ocamlrun below, it actually works ]:
+
+Running[129]: (cd _build/default/compiler-stdlib/src && [ocaml-dir]/ocamlrun ../gen/gen.exe -stdlib [cross-ocaml-root]/usr/lib/stdlib.cma -o caml.ml)
+Running[130]: (cd _build/default && [cross-ocaml-dir]/ocamldep -modules -impl compiler-stdlib/src/caml.ml) > _build/default/compiler-stdlib/src/.caml.objs/caml.ml.d
+Running[131]: (cd _build/default && [cross-ocaml-dir]/ocamlc -w -40 -g -bin-annot -I compiler-stdlib/src/.caml.objs -no-alias-deps -o compiler-stdlib/
+
+================================
+
+Next is shadow-stdlib/gen/gen.exe:
+
+  - same changes as above
+
+Relevant output during build, similar to the above:
+
+Running[218]: (cd _build/default && [cross-ocaml-dir]/ocamlc -w -40 -g -o shadow-stdlib/gen/gen.exe -custom -linkall -I [cross-ocaml-root]/usr/lib/compiler-libs -I compiler-stdlib/src [cross-ocaml-root]/usr/lib/str.cma [cross-ocaml-root]/usr/lib/compiler-libs/ocamlcommon.cma compiler-stdlib/src/caml.cma shadow-stdlib/gen/.gen.eobjs/mapper.cmo shadow-stdlib/gen/.gen.eobjs/gen.cmo)
+
+[ however, this time starting gen.exe via 'ocamlrun' fails with a misleading error message ]:
+Running[219]: (cd _build/default/shadow-stdlib/src && [cross-ocaml-dir]/ocamlrun ../gen/gen.exe -caml-cmi ../../compiler-stdlib/src/caml.cmi -o shadow_stdlib.mli)
+
+Command [219] exited with code 2:
+$ (cd _build/default/shadow-stdlib/src && [cross-ocaml-dir]/ocamlrun ../gen/gen.exe -caml-cmi ../../compiler-stdlib/src/caml.cmi -o shadow_stdlib.mli)
+Fatal error: unknown C primitive `re_replacement_text'
+
+--------------
+
+Here is the thing: if I manually build the same gen.exe without the '-custom' flag, then the cross- ocamlrun is not embedded and it IS possible to run it using the native ocamlrun.
+
+
+Hence my question: how do I convince dune NOT to use the -custom flag and give me a true bytecode file ending in .bc?

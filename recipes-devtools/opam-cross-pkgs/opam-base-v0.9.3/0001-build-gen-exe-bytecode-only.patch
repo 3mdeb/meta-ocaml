@@ -1,0 +1,46 @@
+--- a/compiler-stdlib/gen/jbuild	2018-08-27 12:44:01.085429324 -0700
++++ b/compiler-stdlib/gen/jbuild	2018-08-27 12:55:13.307124260 -0700
+@@ -1,6 +1,7 @@
+ (executables
+  ((names (gen))
+   (libraries (compiler-libs.common compiler-libs.bytecomp))
++  (modes (byte))
+   (preprocess no_preprocessing)))
+
+ (jbuild_version 1)
+
+--- a/compiler-stdlib/src/jbuild	2018-08-27 14:27:08.584916503 -0700
++++ b/compiler-stdlib/src/jbuild	2018-08-27 14:28:34.041106412 -0700
+@@ -13,7 +13,7 @@
+ (rule
+  ((targets (caml.ml))
+   (deps    (../gen/gen.exe))
+-  (action  (run ${<} -stdlib ${ocaml_where}/stdlib.cma -o ${@}))))
++  (action  (run ocamlrun ${<} -stdlib ${ocaml_where}/stdlib.cma -o ${@}))))
+
+
+ (jbuild_version 1)
+
+--- a/shadow-stdlib/gen/jbuild	2018-08-27 14:41:22.755035731 -0700
++++ b/shadow-stdlib/gen/jbuild	2018-08-27 14:58:23.721001486 -0700
+@@ -1,7 +1,7 @@
+ (executables
+  ((names (gen))
+   (libraries (str compiler-libs.common caml))
+-  (link_flags (-linkall))
++  (modes ((byte exe)))
+   (preprocess no_preprocessing)))
+
+ (ocamllex (mapper))
+
+--- a/shadow-stdlib/src/jbuild	2018-08-27 14:59:58.789180963 -0700
++++ b/shadow-stdlib/src/jbuild	2018-08-27 15:00:27.089236430 -0700
+@@ -11,7 +11,7 @@
+ (rule
+  ((targets (shadow_stdlib.mli))
+   (deps    (../gen/gen.exe ../../compiler-stdlib/src/caml.cmi))
+-  (action  (run ${<} -caml-cmi ../../compiler-stdlib/src/caml.cmi -o ${@}))))
++  (action  (run ocamlrun ${<} -caml-cmi ../../compiler-stdlib/src/caml.cmi -o ${@}))))
+
+
+ (jbuild_version 1)
