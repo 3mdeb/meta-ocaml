@@ -12,6 +12,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=1d53f1a1639ae7a362cf05c3a6c466c2"
 SRC_URI[md5sum] = "4ddf4977de7708f11adad692c63e87ec"
 SRC_URI[sha256sum] = "fef80a338099bffc56e4d1ef35146336195a4a9e2086e8cd186c402805503a0a"
 
+PACKAGES += "${PN}-opt"
 
 inherit native
 
@@ -37,7 +38,15 @@ do_compile() {
 	oe_runmake world
     oe_runmake bootstrap
     oe_runmake opt
-    oe_runmake opt.opt
+# NOTE:
+#   we currently intentionally don't build native *.opt tools. Reasoning:
+#   the corresponding ocaml-cross *.opt tools are usually not available. When
+#   doing opam builds, both -native and -cross tools are in the search path, with
+#   -cross tools having priority (as it should be). However, in the absence of
+#   *.opt -cross packages, some opam packages will fall back to -native *.opt
+#   tools instead. This seems to be mostly true for packages using oasis. 
+#
+#   oe_runmake opt.opt
 }
 
 do_install() {
