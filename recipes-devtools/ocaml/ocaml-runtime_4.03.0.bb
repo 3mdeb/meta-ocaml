@@ -1,4 +1,4 @@
-DESCRIPTION = "Objective Caml Compiler"
+DESCRIPTION = "OCaml 'ocamlrun' for target system"
 SECTION = "devel"
 LICENSE = "QPL"
 
@@ -27,14 +27,13 @@ do_configure () {
                 -sysroot ${STAGING_DIR_TARGET} \
                 -host ${BUILD_SYS} \
                 -target ${TARGET_SYS} \
-                -no-graph 
+                -no-graph
 }
 
-# we can't build the optional 'bootstrap' and 'opt.opt' targets when cross-compiling, 
+# we can't build the optional 'bootstrap' and 'opt.opt' targets when cross-compiling,
 # these require executing (cross-)compiled code (ocamlrun) on the host machine
 do_compile() {
 	oe_runmake world
-    oe_runmake opt
 }
 
 INSANE_SKIP_${PN} += " arch file-rdeps ldflags staticdev textrel"
@@ -49,10 +48,10 @@ do_install() {
     rm -rf ${D}/usr/bin/.debug
     rm -rf ${D}/usr/lib/stublibs/.debug
     # there are two 'ocamlrun' executables:
-    #  a) a cross-compiled version in the 'byterun' directory which 
-    #     belongs on the target system if so desired. 
+    #  a) a cross-compiled version in the 'byterun' directory which
+    #     belongs on the target system if so desired.
     #  b) a native version that is required for building this package
-    #     since the OCaml compiler bootstraps itself with the help 
+    #     since the OCaml compiler bootstraps itself with the help
     #     of 'ocamlrun'. The OCaml makefile puts this native version
     #     into the the /usr/bin directory when executing 'make install'
     install -d ${D}/usr/ocaml-runtime
