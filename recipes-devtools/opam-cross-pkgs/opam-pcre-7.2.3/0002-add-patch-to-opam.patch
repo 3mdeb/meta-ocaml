@@ -1,0 +1,18 @@
+--- a/opam	2018-08-30 15:43:42.101274672 -0700
++++ b/opam	2018-08-30 15:45:58.781671580 -0700
+@@ -13,6 +13,7 @@ build: [
+   ["ocaml" "setup.ml" "-test"] {with-test}
+   ["ocaml" "setup.ml" "-doc"] {with-doc}
+ ]
++patches: ["0001-add-pkg-config-option.patch"]
+ install: ["ocaml" "setup.ml" "-install"]
+ remove: [
+   ["ocamlfind" "remove" "pcre"]
+@@ -36,6 +37,7 @@ pcre-ocaml offers library functions for
+ substitution, similar to the functionality offered by the Perl
+ language."""
+ flags: light-uninstall
++extra-files: ["0001-add-pkg-config-option.patch" "md5=0"]
+ url {
+   src:
+     "https://github.com/mmottl/pcre-ocaml/releases/download/v7.2.3/pcre-ocaml-7.2.3.tar.gz"

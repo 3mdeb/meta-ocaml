@@ -1,0 +1,11 @@
+--- a/myocamlbuild.ml	2018-08-30 15:19:43.477327558 -0700
++++ b/myocamlbuild.ml	2018-08-30 15:20:32.861458175 -0700
+@@ -682,7 +682,7 @@ let () =
+               in
+               BaseEnvLight.var_get "with_pcre_config" env
+             in
+-            Unix.open_process_in (pcre_config ^ " --cflags --libs") in
++            Unix.open_process_in (pcre_config ^ " --cflags --libs libpcre") in
+           try
+             let pcre_cflags = input_line ic in
+             let pcre_clibs = input_line ic in
