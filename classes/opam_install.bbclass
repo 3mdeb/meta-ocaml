@@ -14,7 +14,7 @@ opam_install_do_install () {
         export OPAMKEEPLOGS="1"
         export OPAMVERBOSE="5"
         export OPAMKEEPBUILDDIR="1"
-        export OPAMDEBUG="99"
+        export OPAMDEBUG="127"
     fi
 
     if [ -z "${OPAM_PKGNAME_OVERRIDE}" ]; then
